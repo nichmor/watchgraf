@@ -1,12 +1,12 @@
 use std::{path::Path, sync::{Mutex, Arc}, collections::HashSet, time::Duration, thread::sleep};
 
-use notify::{RecommendedWatcher, Event, event::EventKind::{Create, Modify, Remove }, RecursiveMode, Config, Watcher, Error, FsEventWatcher};
+use notify::{RecommendedWatcher, Event, event::EventKind::{Create, Modify, Remove }, RecursiveMode, Config, Watcher, Error};
 use pyo3::{Python, PyResult, types::PyModule, pyclass, pymethods, pymodule, ToPyObject, PyObject};
 
 
 #[pyclass]
 pub struct WatchGraf {
-    watcher: FsEventWatcher,
+    watcher: RecommendedWatcher,
     changes: Arc<Mutex<HashSet<String>>>,
     error: Arc<Mutex<Option<String>>>
 }
@@ -50,7 +50,7 @@ impl WatchGraf {
                 }
             }        
         };
-        let mut watcher = RecommendedWatcher::new(event_handler, Config::default()).unwrap();
+        let mut watcher: RecommendedWatcher = RecommendedWatcher::new(event_handler, Config::default()).unwrap();
         watcher.watch(Path::new(&path), RecursiveMode::Recursive);
         Ok(WatchGraf{watcher, changes, error})
 
