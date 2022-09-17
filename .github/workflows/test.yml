@@ -23,6 +23,11 @@ jobs:
 
     - name: install dependecies
       run: pip install -r requirements.txt
+    - name: build maturin develop
+      uses: messense/maturin-action@v1
+      with:
+        maturin-version: latest
+        command: develop
 
     - run: pip install -e .
     - run: make test
